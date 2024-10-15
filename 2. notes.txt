@@ -1,0 +1,1422 @@
+Disk Management - 
+=======================================================
+what is partition-
+Disk partitioning allow a hard drive to be divided into multiple logical storage units called as partition.
+Separating a disk into partition allow administrator to can use different partition to perform different functions.
+
+
+Disk naming convention in Linux -
+
+generally we use pata,sata and virtual hard disk,
+how to identify hard disk Linux terminal
+
+For SATA - 
+serial advance technology attachment
+
+pata
+parallel advance technology attachment
+==============================================================================================
+Steps for manage partition-
+
+1. show available hard list
+#lsblk
+or
+#fdisk   -l
+
+---------------------------------------------------------
+2. to create partition
+#fdisk	/dev/sdb
+
+n	new partition
+d	delete partition
+p	print partition
+t	change type of partition
+l	show list type of partition
+q	quit
+w	save & quit
+
+create primary partition with 1GB and write it.
+----------------------------------------------------------
+3. create file system on created partition
+#mkfs.xfs	/dev/sdb1
+-----------------------------------------------------------
+4. mount partition on any directory ( temporary )
+#mkdir	/study
+#mount	/dev/sdb1	/study
+-----------------------------------------------------------
+5. mount partition permanently
+#vim	/etc/fstab
+/dev/sdb1	/study	xfs	defaults		0 0
+:wq
+-----------------------------------------------------------
+6. mount partition define in /etc/fstab
+#mount   -a
+-----------------------------------------------------------
+7. for verify
+#lsblk
+
+8. for unmount partition
+#umount		/study
+
+===============================================================================================
+Swap Memory -
+
+
+Steps for manage swap memory -
+-----------------------------------------------------------------------------
+1. for check swap memory
+#free 	-m
+-----------------------------------------------------------------------------
+2. create/extend swap memory
+#fdisk	/dev/sdb
+
+create partition as per requirement of swap memory, set partition id/type = swap(82) (with help of t)
+
+:w  (save)
+-----------------------------------------------------------------------------
+3. convert partition into swap space
+#mkswap		/dev/sdb3
+-----------------------------------------------------------------------------
+4. for swap on
+#swapon		/dev/sdb3
+-----------------------------------------------------------------------------
+5. permanent mount swap record
+#vim	/etc/fstab
+/dev/sdb3	swap	swap	defaults	0  0
+:wq
+-----------------------------------------------------------------------------
+6. verify swap space
+#free 	-m
+-----------------------------------------------------------------------------
+For remove swap
+
+#swapoff	/dev/sdb3
+
+remove swap line from /etc/fstab   file
+
+finally remove partition from  fdisk  /dev/sdb
+------------------------------------------------------------------------------
+LVM - Logical Volume Management.
+
+Storage technology play very important role in performance, availability, flexible disk management.
+LVM is very popular technology in disk management, LVM provide flexible disk management option for system administrator.
+LVM allow us to manage disk logical rather than physical management.
+
+when we create LVM we need go via three steps -
+1. Physical Volume (PV)
+2. Volume Group (VG)
+3. Logical Volume (LV)
+
+Draw Diagram
+
+
+Steps For Manage LVM
+============================================================================
+Step I: Create partition with LVM ID (8e)
+
+#fdisk   /dev/sdb
+create partition with 1 GB and set type LVM (8e) 
+:w
+-----------------------------------------------------------------------------
+Step II: Manage Physical Volume (PV)
+
+1. Create PV
+#pvcreate	/dev/sdb1
+
+2. Display PV
+#pvdisplay	/dev/sdb1
+
+3. Remove PV
+#pvremove	/dev/sdb1
+------------------------------------------------------------------------------
+Step III: Manage Volume Group (VG)
+
+1. Create VG ( default PE size )
+#vgcreate	india		/dev/sdb1
+
+or
+
+2. Create VG ( Custom PE Size )
+#vgcreate	-s	16	india		/dev/sdb1
+
+
+3. Display VG
+#vgdisplay	india
+
+4. Extend VG
+#vgextend	india		/dev/sdb2
+
+5. Reduce VG
+#vgreduce	india		/dev/sdb2
+
+6. Remove VG
+#vgremove	india
+---------------------------------------------------------------------------------------
+Step IV: Manage LV
+
+1. Create LV ( -L indicate size in MB )
+#lvcreate	-L	200	-n	/dev/india/mumbailv
+or
+1. Create LV ( -l indicate size in PE )
+#lvcreate	-l	50	-n	/dev/india/mumbailv
+-----------------------------------------------------------------------------------
+2. Extend LV 
+#lvextend	-L	+100	/dev/india/mumbailv
+or
+#lvextend	-l	+25	/dev/india/mumbailv
+-----------------------------------------------------------------------------------
+3. Reduce LV
+#lvreduce	-L	-100	/dev/india/mumbailv
+or
+#lvreduce	-l	-25	/de/india/mumbailv
+-----------------------------------------------------------------------------------
+4. Display LV
+#lvdisplay	/dev/india/mumbailv
+-----------------------------------------------------------------------------------
+5. Remove LV
+#lvremove	/dev/india/mumbailv
+-------------------------------------------------------------------------------------------------
+Step V: Create FS and Mount LV
+
+1. Create FS
+#mkfs.xfs	/dev/india/mumbailv
+
+2. Create directory ( temporary mount )
+#mkdir	/mumbai
+#mount	/dev/india/mumbailv	/mumbai
+
+3. Permanent Mount
+#vim	/etc/fstab
+/dev/india/mumbailv	/Mumbai		xfs	defaults	0  0
+:wq
+
+#mount	-a
+
+4. For verify
+#lsblk
+--------------------------------------------------------------------------------------------------
+create logical volume nokialv and sonylv with 600MB and 800MB from volume group android.
+create xfs file system on both LV. mount both LV respectively /nokia and /sony directory permanently.
+
+Ans:
+
+partition 	= 600+800= 1400 + 8 ( 2PE ) = 1408 MB
+PV		=
+VG		= android
+LV		= nokialv ( 600M ) and sonylv ( 800M )
+FS		= xfs
+Mount permanent	= /nokia & /sony
+--------------------------------------------------------------------------------------------
+create logical volume acerlv and hplv with 400MB  and  800MB from volume group loptop.
+create xfs file sytem on both LV and mount repectively /acer & /hp directory permanently [ Note PE Size = 16 MB ]
+
+Ans:
+
+partition 	= 400+800= 1200 + 32 ( 2PE ) = 1232 MB
+PV		=
+VG		= laptop ( 1PE = 16MB )
+LV		= acerlv ( 400M ) and hplv ( 800M )
+FS		= xfs
+Mount permanent	= /acer	& /hp
+---------------------------------------------------------------------------------------------
+create logical volume  complv and mechlv with 200PE and 1200MB from volume group engineering.
+create xfs file system on complv and mount it permanently /comp directory.
+create ext4 file system on mechlv and mount it permanently /mech directory.
+ 
+Ans -
+
+=============================================================
+
+
+
+---------------------------------------------------------------------------------------
+check ip address in Linux
+#ifconfig
+or
+#ip  addr
+---------------------------------------------------------------------------------------
+set ip address by using following command
+
+1. nmcli ( Network Manager Command Line Interface )
+2. nmtui ( Network Manager Text User Interface )
+===========================================================================================================================
+1. nmcli:
+
+1. show connection list ( connection/profile )
+#nmcli	conn	show
+---------------------------------------------------------------------------------------
+2. create connection for set ip address ( manual or static )
+#nmcli    conn    add    con-name   india    ifname  enp0s3   type   ethernet   ipv4.add  192.168.1.2/24   gw4   192.168.1.1   ipv4.dns 192.168.1.1   connection.autoconnect   yes  ipv4.method   manual
+---------------------------------------------------------------------------------------
+3. for down connection ( deactivate )
+#nmcli	  conn    down    enp0s3
+---------------------------------------------------------------------------------------
+4. for up connection  ( activate )
+#nmcli    conn    up    india
+---------------------------------------------------------------------------------------
+5. to show details of connection
+#nmcli	  conn    show    india
+---------------------------------------------------------------------------------------
+6. to show list   of  nic
+#nmcli	  device   status
+---------------------------------------------------------------------------------------
+7. to modify   connection
+
+#nmcli    conn  modify   india    ipv4.add   192.168.1.150/24
+#nmcli    conn  modify   india    gw4  192.168.1.254
+#nmcli    conn  modify   india    ipv4.dns  192.168.1.254
+#nmcli    conn  modify   india    +ipv4.dns  8.8.8.8
+
+to take effect of modify connection down and up connection
+-----------------------------------------------------------------------------------------------------------------------------
+8. create connection for set ip address ( automatic or dhcp/dynamic )
+#nmcli   conn   add   con-name   Mumbai   ifname    enp0s3    type    ethernet   connection.autoconnect   yes  ipv4.method   auto
+------------------------------------------------------------------------------------------
+9. after create connections/profile stored in following location
+#cd   /etc/NetworkManager/system-connections/
+#ls
+-------------------------------------------------------------------------------------------
+10. for delete connection
+#nmcli    conn   delete   india
+-------------------------------------------------------------------------------------------
+11. for set hostname  to computer
+#hostnamectl   set-hostname   server.example.com
+-------------------------------------------------------------------------------------------
+12 for check hostname
+#hostname
+===========================================================================================================================
+2. nmtui
+
+manage ip address with nmtui command
+
+#nmtui
+---------------------------------------------------------------------------------------------------------------------------
+
+
+Access Remote Computer
+========================================================================================
+ssh ( Secure Shell )
+----------------------------------------------------------------------------------------
+ssh is use for access remote computer by using command line interface.
+ssh is a secure protocol,cause it use private and public key to establish connection between source to destination computer.
+ssh use port number 22.
+In history telnet protocol popularly use to access remote computer but cause security issues telnet outdate now, instead telnet ssh popularly use.
+
+-----------------------------------------------------------------------------------------
+on both server ( server1 & comp1 ) update ssh configuration file
+
+#vim	/etc/ssh/sshd_config
+
+PermitRootLogin         yes                            [ Line number 40 ]
+
+PasswordAuthentication   yes                           [ Line number 65 ]
+
+:wq
+
+restart  ssh   service
+#systemctl	restart    sshd
+-----------------------------------------------------------------------------------------
+1. open terminal on server1 and access comp1 by using ssh ( root user )
+
+#ssh	root@192.168.1.3
+
+
+for logout
+#exit
+
+or
+
+press "ctrl+d" key
+-----------------------------------------------------------------------------------------
+2. open terminal on server1 and access comp1 by using ssh ( sara user )
+
+#ssh	sara@192.168.1.3
+
+
+for logout
+$exit
+or
+press "ctrl+d" key
+-----------------------------------------------------------------------------------------
+open terminal on comp1 and restrict root and sara user for ssh
+
+#vim	/etc/ssh/sshd_config
+
+PermitRootLogin		no
+DenyUsers	sara
+
+:wq
+
+#systemctl	restart 	sshd
+
+For verify , open terminal on server1
+#ssh	root@192.168.1.3
+#ssh	sara@192.168.1.3
+
+-------------------------------------------------------------------------------------------
+Access remote computer by using "ssh key-base" authentication ( without password )
+
+open terminal on server1 and generate ssh-key
+#ssh-keygen
+
+now,send key to comp1 ( copy server1 and paste into comp1 )
+
+for root user
+#ssh-copy-id	root@192.168.1.3
+
+for sara user
+#ssh-copy-id    sara@192.168.1.3
+
+For verify , open terminal on server1
+#ssh	root@192.168.1.3
+#ssh	sara@192.168.1.3
+---------------------------------------------------------------------------------------------
+open terminal on comp1 and remove key send by server1 
+
+for root user
+#rm	-rvf	/root/.ssh/auth*
+
+for sara user
+#rm     -rvf	/home/sara/.ssh/auth*
+==================================================================================================================
+Manage service 
+-------------------------------------------------------------------
+start ssh service
+#systemctl	start		sshd
+-------------------------------------------------------------------
+stop ssh service
+#systemctl	stop		sshd
+-------------------------------------------------------------------
+restart	ssh service
+#systemctl	restart		sshd
+-------------------------------------------------------------------
+show ssh service status
+#systemctl	status		sshd
+-------------------------------------------------------------------
+disable ssh service ( permanent off ssh - every boot process )
+#systemctl	disable		sshd
+-------------------------------------------------------------------
+enable ssh service ( permanent on ssh - every boot process )
+#systemctl	enable		sshd
+==================================================================================================================
+Remote File Transfer
+
+Remote file transfer allow transfer file/dir local computer to remote computer and remote computer to local computer.
+
+Remote file Transfer use following commands
+1. scp ( Secure Copy )
+2. rsync ( Remote Synchronization )
+
+both command use ssh protocol to transfer file, both are secure because ssh use encrypted link source to destination.
+rsync also support for incremental backup.
+------------------------------------------------------------------------------
+1. scp ( secure copy )
+
+open terminal of server1
+#mkdir  /aws
+#touch  /aws/note{1..9}.txt
+---------------------------------------------------------
+Transfer file/dir local to remote
+
+#scp	-r	/aws/note1.txt		root@192.168.1.3:/home/
+#scp	-r	/aws			root@192.168.1.3:/home/
+-----------------------------------------------------------
+Transfer file/dir remote to local
+
+#mkdir 	/cloud
+#scp	-r	root@192.168.1.3:/home/note1.txt      /cloud/
+#scp	-r	root@192.168.1.3:/home/aws	      /cloud/
+-------------------------------------------------------------------------------------------------
+2. rsync ( Remote Synchronization )
+
+#mkdir /gcp
+#touch /gcp/file{1..9}.txt
+
+1. Transfer file/dir local to remote
+#rsync	-rv	/gcp/file1.txt		root@192.168.1.3:/home/
+#rsync	-rv	/gcp			root@192.168.1.3:/home/
+--------------------------------------------------------------------------
+2. Transfer file/dir remote to local
+
+#mkdir  /data
+#rsync	-rv	root@192.168.1.3:/home/file1.txt	/data/
+#rsync	-rv	root@192.168.1.3:/home/gcp		/data/
+-------------------------------------------------------------------------------------------------
+Firewall:
+firewall filter incoming and outgoing traffic computer based on predefine rule decide allow or deny
+ traffic.
+Popularly firewall called first security gate/first line of defense.
+Firewall have zones, which created as per the trust level of network.
+Firewall protect computer from unauthorize services or port.
+eg.
+home, work, public etc.
+--------------------------------------------------------------
+check firewall status
+#systemctl	status		firewalld
+--------------------------------------------------------------
+stop firewall
+#systemctl	stop		firewalld
+--------------------------------------------------------------
+start firewall
+#systemctl	start 		firewalld
+--------------------------------------------------------------
+restart firewall
+#systemctl	restart 	firewalld
+--------------------------------------------------------------
+permanent on firewall
+#systemctl	enable 		firewalld
+--------------------------------------------------------------
+permanent off firewall
+#systemctl	disable 	firewalld
+--------------------------------------------------------------
+check firewall default zone
+#firewall-cmd 	--get-default-zone
+--------------------------------------------------------------
+show firewall zone list
+#firewall-cmd	--list-all-zones
+--------------------------------------------------------------
+set firewall default zone
+#firewall-cmd	--set-default-zone
+--------------------------------------------------------------
+show active zone details
+#firewall-cmd	--list-all
+--------------------------------------------------------------
+add service into firewall
+#firewall-cmd	--permanent 	--add-service=http
+--------------------------------------------------------------
+remove service from firewall
+#firewall-cmd	--permanent	--remove-service=http
+--------------------------------------------------------------
+reload firewall service
+#firewall-cmd	--reload
+--------------------------------------------------------------
+add port into firewall
+#firewall-cmd	--permanent	--add-port=80/tcp
+--------------------------------------------------------------
+remove port from firewall
+#firewall-cmd	--permanent	--remove-port=80/tcp
+--------------------------------------------------------------
+Package Management in RHEL
+
+All software on a Linux system is divided into packages that can be installed, uninstalled or update.
+In Linux distributions, a “package” refers to a compressed file archive containing all of the files that come with a particular application.
+
+Package Structure -
+httpd-tools-2.4.6-7.el8.x86_64.rpm
+
+---------------------------------------------------------------------
+Methods for install packages
+
+1. Standalone method
+This method use for single or few no of computers.
+Eg. 
+Cd, dvd, pd etc.
+
+2. Network Installation-
+This method is used for large number of computers.
+Eg. 
+Centralized Server
+-------------------------------------------------------------------------
+1. Standalone method
+In standalone method rpm command use for manage packages.
+
+rpm : (Red Hat Package Manager)
+
+RPM command is used to install package in Linux like RHEL, CentOS Fedora etc.
+rpm command use for standalone installation.
+
+Drawback of rpm command :
+1. We Cant install dependent software in single shot.
+2. It Does not wait for user confirmation.
+---------------------------------------------------------------------------------------------
+Add iso file in VM if not present (vm setting - storage-optical device - choose iso file -start vm)
+#lsblk
+#cd  /run/media/root/RHEL-9-2-0-BaseOS-x86_64/AppStream/Packages
+
+--------------------------------------------------------------------
+1. check package is installed or not
+#rpm	-q	vsftpd
+--------------------------------------------------------------------
+2. For install package
+#rpm	-ivh	vsftpd-3......rpm
+--------------------------------------------------------------------
+3. For remove/erase package
+#rpm	-e	vsftpd
+--------------------------------------------------------------------
+4. For update package
+#rpm	-U	vsftpd
+=====================================================================================
+2. Network Installation Method
+
+Yum: (Yellowdog Updater, Modified)
+YUM is an open source package management tool use for install rpm based packages in Linux system.
+Yum overcome all drawback of rpm command.
+It allows users and system administrator to easily install, update, remove or search software packages on a systems.
+
+-------------------------------------------------------------------
+Manage packages with yum command:
+------------------------------------------------------------
+1. check iso file path and copy it
+#lsblk
+------------------------------------------------------------
+2. create repo file
+#cd 	/etc/yum.repos.d/
+#vim    server.repo
+
+[01]
+name=app
+baseurl=file://run/media/root/RHEL......../AppStream/
+enabled=1
+gpgcheck=0
+[02]
+name=base
+baseurl=file://run/media/root/RHEL......../BaseOS/
+enabled=1
+gpgcheck=0
+
+:wq
+--------------------------------------------------------------------------------
+show repolist
+#yum	repolist
+--------------------------------------------------
+check package installed or not
+#yum	info	vsftpd
+--------------------------------------------------
+for install package
+#yum	install 	vsftpd
+--------------------------------------------------
+for update package
+#yum	update	vsftpd
+--------------------------------------------------
+for remove package
+#yum	remove	vsftpd
+--------------------------------------------------
+for clean cache
+#yum clean all
+================================================================================================
+Steps for create yum server (192.168.1.2) :
+------------------------------------------------------------
+Step1. check iso file path and copy it
+#lsblk
+------------------------------------------------------------
+Step2. create repo file
+#cd 	/etc/yum.repos.d/
+#vim    server.repo
+
+[01]
+name=app
+baseurl=file://run/media/root/RHEL......../AppStream/
+enabled=1
+gpgcheck=0
+[02]
+name=base
+baseurl=file://run/media/root/RHEL......../BaseOS/
+enabled=1
+gpgcheck=0
+
+:wq
+-------------------------------------------------------------
+Step3. install httpd package
+#yum 	install		httpd	-y
+-------------------------------------------------------------
+Step4. start and enable httpd service
+#systemctl	start	httpd
+#systemctl	enable	httpd
+-------------------------------------------------------------
+Step5. add http into firewall
+#firewall-cmd	--permanent	--add-service=http
+#firewall-cmd	--reload 
+-------------------------------------------------------------
+Step6. Copy all package and paste into /var/www/html/
+
+#lsblk
+#cd	/run/media/root/RHEL........X86_64/
+#cp	-rvf	AppStream	/var/www/html/
+#cp	-rvf	BaseOS		/var/www/html/
+-------------------------------------------------------------
+Step7. Update repo file
+
+#vim	/etc/yum.repos.d/server.repo
+
+[01]
+name=app
+baseurl=http://192.168.1.2/AppStream/
+enabled=1
+gpgcheck=0
+[02]
+name=base
+baseurl=http://192.168.1.2/BaseOS/
+enabled=1
+gpgcheck=0
+
+:wq
+-------------------------------------------------------------------------
+Step8. For verify
+
+#yum	clean all
+#yum 	install		vsftpd
+#yum	remove		vsftpd
+
+========================================================================================================
+Step For Client Computers
+---------------------------------------------------------
+open terminal on comp1 (192.168.1.3)
+
+#yum	install		vsftpd
+--------------------------------------------------------
+Create repo file for access packages from yum server
+#vim	server.repo
+[01]
+name=app
+baseurl=http://192.168.1.2/AppStream/
+enabled=1
+gpgcheck=0
+[02]
+name=base
+baseurl=http://192.168.1.2/BaseOS/
+enabled=1
+gpgcheck=0
+
+:wq
+------------------------------------------------------------
+For Verify
+#yum 	install		vsftpd
+#yum	remove		vsftpd
+
+=======================================================================================================
+NFS ( Network File System )
+
+NFS is use for share directory with all client computers.
+It is very easy to configure and receive share directory.
+NFS share directory with all client connection on network which running on Linux/Unix OS.
+It is port number 2049
+
+---------------------------------------------------------------------
+Important Concept-
+
+package			-	nfs*  nfs-utils
+service			-	nfs-server
+firewall		-	nfs
+port			- 	2049
+configuration file	-	/etc/exports
+-----------------------------------------------------------------------------------------------------
+Steps Configure NFS server ( 192.168.1.2 )
+
+Step1. install package
+#yum	install		nfs*	-y
+-----------------------------------------------------------------------------
+Step2. start and enable service
+#systemctl	start	nfs-server
+#systemctl	enable	nfs-server
+-----------------------------------------------------------------------------
+Step3. Create content for share and give full permission
+#mkdir		/database
+#touch		/database/note{1..6}.txt
+#chmod		777	/database
+-----------------------------------------------------------------------------
+Step4. update configuration file
+
+#vim	/etc/exports
+/database	192.168.1.0/24(rw)
+
+:wq
+-----------------------------------------------------------------------------
+Step5. restart nfs service
+#systemctl	restart		nfs-server
+-----------------------------------------------------------------------------
+Step6. add nfs into firewall
+#firewall-cmd	--permanent	--add-service=nfs
+#firewall-cmd	--reload
+-----------------------------------------------------------------------------
+Step7. For verify
+#exportfs	-rv
+---------------------------------------------------------------------------------------------------------------------
+Steps for client computer ( 192.168.1.3 )
+
+Step1. Install package
+#yum	install		nfs-utils	-y
+-----------------------------------------------------------------------------
+Step2. Create Directory and temporary mount
+
+#mkdir		/Mumbai
+#mount	-t	nfs	192.168.1.2:/database	/mumbai
+#ls		/mumbai
+-----------------------------------------------------------------------------
+Step3. Permanent Mounting
+#vim	/etc/fstab
+
+192.168.1.2:/database	/mumbai		nfs	defaults	0 0
+:wq
+
+#mount	-a
+-----------------------------------------------------------------------------
+Step4: For Verify
+#ls	/mumbai
+or
+#mount
+or
+#df	-h
+==========================================================================================================================
+DHCP Server ( Dynamic Host Configuration Protocol )
+DHCP server use for provide automatic ip addressing to client computers.
+DHCP server provide unique ip address to every client as per dhcp scope (range)
+It use port number 67 & 68
+It provide ip address dynamically to client computer
+Communication between DHCP server and client computer for automatic ip addressing is called DORA process.
+
+-------------------------------------------------------------------------------
+Import Concept
+
+package			-	dhcp-server
+service			-	dhcpd
+firewall		- 	dhcp
+configuration file	- 	/etc/dhcp/dhcpd.conf
+port number		-	67 & 68
+-------------------------------------------------------------------------------
+Steps For Configure DHCP Server ( 192.168.1.2  )
+
+Step1. Install package
+#yum	install		dhcp-server
+---------------------------------------------------------
+Step2. update dhcp configuration file
+#cp  -rvf   /usr/share/doc/dhcp-server/dhcpd.conf.example  /etc/dhcp/dhcpd.conf
+
+#vim   /etc/dhcp/dhcpd.conf
+
+subnet  192.168.1.0  netmask   255.255.255.0   {  			[ line 47 ]
+  range 192.168.1.5   192.168.1.254;              			[ line 48 ]
+  option routers  192.168.1.1;			  			[ line 51 ]
+  option broadcast-address  192.168.1.255;       			[ line 52 ]
+  default-lease-time    3600;    					[ line 54 ]
+
+:wq
+---------------------------------------------------------
+Step3. start and enable dhcp service
+#systemctl   start   dhcpd
+#systemctl   enable  dhcpd
+---------------------------------------------------------
+Step4. add dhcp into firewall
+#firewall-cmd  --permanent  --add-service=dhcp
+#firewall-cmd  --reload
+==============================================================================================
+Client side configuration -
+
+1. activate automatic (auto) connection
+#nmcli   conn   up   enp0s3
+
+#ifconfig
+==============================================================================================
+DHCP Reservation -
+DHCP Reservation allow us to provide fix ip address to specific client on the basis of MAC address.
+
+open server configuration file
+#vim   /etc/dhcp/dhcpd.conf
+
+host  node  {					    					[ line 79 ]
+	hardware ethernet  08:00:27:d4:e3:90;		    				[ line 80 ]
+	fixed-address  192.168.1.100;				    			[ line 81 ]
+}						    					[ line 82 ]
+:wq
+
+#sytemctl   restart   dhcpd
+---------------------------------------------------------------------------------------------------
+to verify go to client computer down and up connection
+
+#nmcli   conn    down    enp0s3
+#nmcli   conn    up     enp0s3
+
+#ifconfig
+====================================================================================================
+samba:
+samba server user for share directory with client computers with cross platform,linux system can share directory with Linux, unix, windows, mac os etc.
+samba provide secure authentication to access shared data means client required valid username and password.
+Samba is a free software re-implementation of the SMB networking protocol and it  was originally developed by Andrew Tridgell.
+samba use cifs (common internet file system) protocol at receiver side (client)
+
+Important concept -
+--------------------------------------------------
+package		-	samba  samba-client  samba-common   cifs-utils
+service		-	smb nmb
+firewall	-	samba
+config file	-	/etc/samba/smb.conf
+port number	-	137,138,139,445 
+==================================================================================================
+Steps for configure samba server ( 192.168.1.2 )
+
+Step1: install package
+#yum	install	  samba   samba-common   samba-client   -y
+--------------------------------------------------
+Step2: start and enable service
+#systemctl	start    smb   nmb
+#systemctl	enable   smb   nmb
+--------------------------------------------------
+Step3: add samba into firewall
+#firewall-cmd	--permanent   --add-service=samba
+#firewall-cmd	--reload
+--------------------------------------------------
+Step4: Create directory for share purpose
+#mkdir 	/aws
+#mkdir  /aws/services{1..5}
+--------------------------------------------------
+Step5. update configuration file
+#vim    /etc/samba/smb.conf
+
+[cloud]
+	comment=welcome
+	path=/aws
+	browseable=yes
+	read only=yes
+	valid users=frank
+	host allow=192.168.1.0/24
+:wq
+--------------------------------------------------
+Step6: create user frank and set samba passwd
+#useradd	frank
+#smbpasswd	-a    frank
+--------------------------------------------------
+Step7: restart service
+#systemct   restart   smb  nmb
+--------------------------------------------------
+Ste8: set selinux permissive mode
+#setenforce   permissive
+====================================================================================================
+Steps for client side 
+
+----------------------------------------------------------
+Step1. install  package
+#yum	install		samba-client	cifs-utils	-y	
+----------------------------------------------------------
+Step2. create directory temporary mount
+#mkdir		/Mumbai
+#mount	-t	cifs	//192.168.1.2/cloud	/Mumbai		-o   username=frank
+#ls	/Mumbai
+----------------------------------------------------------
+step3: for permanent mount
+
+#vim	/etc/fstab
+//192.168.1.2/cloud   /Mumbai   cifs    credentials=/root/pass.txt,defaults	0 0
+:wq
+
+create credentials file
+#vim   /root/pass.txt
+username=frank
+password=india
+
+:wq
+
+#mount	-a
+----------------------------------------------------------
+
+for verify
+#mount
+or
+#ls	/Mumbai
+=================================================================================================
+SELinux ( Security Enhance Linux ):
+
+selinux provide enhance security layer to Linux os.
+selinux create security rules,labels,context to securely access various services,ports,file,directory etc.
+selinux provide security label to every file,dir,service,port etc, if security label is matched then content can be accessed.
+
+selinux security work in 3 modes.
+
+1. enforcing
+2. permissive
+3. disabled
+--------------------------------------------------------------------------------
+1. enforcing 
+if any one break rule then selinux strictly deny and store log.
+
+2. permissive
+if any one break rule then selinux allow and store log.
+
+3. disabled
+selinux security completely disabled.
+--------------------------------------------------------------------------------
+check selinux mode
+#getenforce
+--------------------------------------------------------
+set selinux mode ( enforcing )
+#setenforce   enforcing
+or
+#setenforce	1
+--------------------------------------------------------
+set selinux mode ( permissive )
+#setenforce   permissive
+or
+#setenforce	0
+--------------------------------------------------------
+set selinux mode permanently
+
+#vim	/etc/selinux/config
+
+SELINUX=enforcing
+
+:wq
+==============================================================================================
+Web Hosting - 
+Web server allow to share web page over the network (internet),client can access website using any web browser.
+Web server by default use http and https service.
+It use port 80 (http) and 443 (https).
+Apache webserver is one of the most popular webserver in world,appro 40% website hosted on apache webserver world wide.
+Apache http server distributed by apache software foundation.
+--------------------------------------------------------------------------------------
+Important concept
+-----------------------------------------------------------------
+package			-	httpd
+service			- 	httpd
+firewall service	-	http & https
+configuration file	-	/etc/httpd/conf.d/*.conf
+default directory	-	/var/www/html/
+port number		- 	80 & 443
+========================================================================================================
+Steps for configure apache web server ( 192.168.1.3):
+----------------------------------------------------------------------------
+Step1: install package
+#yum	install		httpd   -y
+----------------------------------------------------------------------------
+Step2: start and enable service
+#systemctl	start     httpd
+#systemctl	enable    httpd
+----------------------------------------------------------------------------
+Step3: Create test web page
+#vim   /var/www/html/index.html
+<html>
+<head><title>official</title></head>
+<body bgcolor=skyblue>
+<h1>Welcome TATA Official Website</h1>
+</body>
+</html>
+:wq
+----------------------------------------------------------------------------
+Step4: add http into firewall
+#firewall-cmd	--permanent	--add-service=http
+#firewall-cmd   --reload
+----------------------------------------------------------------------------
+Step5: For verify
+
+Open Web browser
+http://192.168.1.3
+========================================================================================================
+Virtual Hosting
+Virtual web hosting allow us to host multiple website on single server.
+----------------------------------------------------------------------------
+Step6: create directory and webpage
+#mkdir  /account
+#vim    /account/index.html
+<html>
+<head><title>Account</title></head>
+<body bgcolor=yellow>
+<h1>Welcome TATA Accountant Website</h1>
+</body>
+</html>
+:wq
+----------------------------------------------------------------------------
+Step7: Create configuration file for both website
+
+#vim	/etc/httpd/conf.d/account.conf
+
+<VirtualHost *:80>
+ServerName account.tata.com
+ServerAdmin root@account.tata.com
+DocumentRoot  /account/
+</VirtualHost>
+<Directory  /account/>
+<RequireAll>
+Require all granted
+</RequireAll>
+</Directory>
+:wq
+
+#vim	/etc/httpd/conf.d/offical.conf
+
+<VirtualHost *:80>
+ServerName official.tata.com
+ServerAdmin root@official.tata.com
+DocumentRoot  /var/www/html/
+</VirtualHost>
+<Directory  /var/www/html/>
+<RequireAll>
+Require all granted
+</RequireAll>
+</Directory>
+:wq
+
+----------------------------------------------------------------------------
+Step8: Check syntax and restart service
+#httpd		-t
+
+#systemctl	restart		httpd
+----------------------------------------------------------------------------
+Step9: update host file
+192.168.1.3	official.tata.com
+192.168.1.3	account.tata.com
+:wq
+----------------------------------------------------------------------------
+Step10: For Verify open browser
+
+http://official.tata.com
+http://account.tata.com
+----------------------------------------------------------------------------
+Note:
+if account site not show webpage then
+#setenforce	0
+
+Now refresh webpage.
+
+============================================================================================================
+Manage SELinux Security Labels:
+
+check selinux labels
+
+#ls	-ldZ	/account
+#ls	-ldZ	/var/www/html/
+
+Note. 
+When we create file/directory in top level(/) then we got default_t label
+When create file/directory inside any other existing directory label inherit from parent directory
+--------------------------------------------------------------------------------------------------------
+For change label ( temporary )
+#chcon   -R -t   httpd_sys_content_t   /account
+#ls	-ldZ	/account
+--------------------------------------------------------------------------------------------------------
+Temporary label reset (remove)
+#touch    /.autorelabel
+#reboot
+or
+
+#restorecon	-Rv   /account
+--------------------------------------------------------------------------------------------------------
+for change label (permanently)
+
+#semanage   fcontext   -a  -t   httpd_sys_content_t   "/account(/.*)?"
+#restorecon	-Rv	/account
+--------------------------------------------------------------------------------------------------------
+For show custom set labels
+#semanage	fcontext	-C	-l
+--------------------------------------------------------------------------------------------------------
+For remove label
+#semanage	fcontext	-d   "/account(/.*)?"
+#restorecon	-Rv	/account
+--------------------------------------------------------------------------------------------------------
+to check parent and child label matched or not
+
+#matchpathcon   -V   /account/*
+
+--------------------------------------------------------------------------------------------------------
+to show selinux Booleans
+
+#getsebool   -a
+
+
+to set sebool on
+#setsebool   radius_use_jit  on
+or
+#setsebool   radius_use_jit  1
+-----------------------------------------------
+to set sebool off
+#setsebool   radius_use_jit  off
+or
+#setsebool   radius_use_jit  0
+====================================================================================================================
+Host website with https 
+https ( secure hyper text transfer protocol) allow us to create secure connection between web server to web browser by using encryption (ssl/tls secure socket layer/transport layer security )
+https is popularly use for secure websites
+it use port number 443
+
+
+Steps for configure https website
+--------------------------------------------------------------------------------
+1. install package
+#yum	install		httpd  mod_ssl   openssl   -y
+--------------------------------------------------------------------------------
+2. start and enable service
+#systemctl	start	httpd
+#systemctl	enable  httpd
+--------------------------------------------------------------------------------
+3. Create test web page
+
+#vim   /var/www/html/index.html
+<html>
+<head><title>bank</title></head>
+<body bgcolor=skyyllow>
+<h1>Welcome TATA Finance Website</h1>
+</body>
+</html>
+:wq
+----------------------------------------------------------------------------
+Step4: add http into firewall
+#firewall-cmd	--permanent	--add-service=https
+#firewall-cmd   --reload
+----------------------------------------------------------------------------
+Step5: Create self-sign Certificate and key
+#openssl  req  -x509  -nodes  -days  365   -newkey   rsa:2048   -keyout   /home/tata.key   -out   /home/tata.crt
+----------------------------------------------------------------------------
+Step6: Update ssl.conf file 
+#vim   /etc/httpd/conf.d/ssl.conf
+
+SSLCertificateFile  /etc/pki/tls/certs/tata.crt				[ line 85 ]
+SSLCertificateKeyFile  /etc/pki/tls/private/tata.key			[ line 92 ]
+
+:wq
+----------------------------------------------------------------------------
+Step7: Transfer key and certs on required location
+
+#cp  -rvf  /home/tata.crt   /etc/pki/tls/certs/
+#cp  -rvf  /home/tata.key   /etc/pki/tls/private/
+----------------------------------------------------------------------------
+Step8: create configuration file
+#vim  /etc/httpd/conf.d/tata.conf
+<VirtualHost *:443>
+SSLEngine on
+SSLCertificateFile  /etc/pki/tls/certs/tata.crt				
+SSLCertificateKeyFile  /etc/pki/tls/private/tata.key
+ServerName finance.tata.com
+ServerAdmin root@finance.tata.com
+DocumentRoot /var/www/html/
+</VirtualHost>
+<Directory /var/www/html/>
+<RequireAll>
+Require all granted
+</RequireAll>
+</Directory>
+<VirtualHost *:80>
+ServerName finance.tata.com
+Redirect  /  https://finance.tata.com
+</VirtualHost>
+:wq
+------------------------------------------------------------------------------
+Step9: restart service and update host file
+#systemctl	restart		httpd
+
+#vim  /etc/hosts
+192.168.1.3  finance.tata.com
+:wq
+------------------------------------------------------------------------------
+Step10: for verify, open browser
+https://finance.tata.com
+==========================================================================================================================
+MariaDB
+
+What is mariadb?
+MariaDB is a free and open source database management system.
+It store or organize data in backend in the format of table, rows, columns etc.
+MariaDB Develop same community who develop Oracle MySQL database.
+MariaDB develop by Corporation AB and open source community.
+MariaDB use port 3306.
+
+==========================================================================================================================
+Steps for manage MariaDB (192.168.1.2/24) :
+---------------------------------------------------------------------------------
+1. install MariaDB
+#yum	install		mariadb  	mariadb-server 	-y
+---------------------------------------------------------------------------------
+2. start and enable MariaDB
+#systemctl	start	mariadb
+#systemctl	enable 	MariaDB
+---------------------------------------------------------------------------------
+3. add MySQL into firewall ( not recommended )
+#firewall-cmd	--permanent	--add-service=mysql
+#firewall-cmd	--reload
+ --------------------------------------------------------------------------------
+4. login into database
+#mysql	  -u	root
+> show  databases;
+>exit
+---------------------------------------------------------------------------------
+5. Secure Database ( by using following script/command )
+#mysql_secure_installation
+---------------------------------------------------------------------------------
+6. Login in database valid username and password
+#mysql	-u	root	-p
+
+>show 	databases;
+>create   database  mydb;
+>show   databases;
+---------------------------------------------------------------------------------
+7. Create user in database
+> grant   all   on   mydb.*    to    harry@localhost     identified   by   '123';
+> exit
+---------------------------------------------------------------------------------
+8. login via harry user
+# mysql   -u    harry    -p
+>show   databases;
+>exit
+---------------------------------------------------------------------------------
+9. create sample database for backup and restore purpose
+#mysql   -u   root   -p
+> show databases;
+> create  databases   employee;
+> show   databases;
+> use   employee;
+> show   tables;
+> create   table   info (ID int, Name varchar(30), City varchar(30), PinCode int);
+> show  tables;
+> insert  into  info (ID,Name,City,PinCode)  vaule (1,'Ajay','Delhi',413123);
+> insert  into  info (ID,Name,City,PinCode)  vaule (2,'John','Chennai',411004);
+> insert  into  info (ID,Name,City,PinCode)  vaule (3,'Sara','Mumbai',414001);
+> select   *  from   info;
+> exit
+----------------------------------------------------------------------------------
+10. For take backup
+#mysqldump   -u   root   -p   employee   >   /home/emp.db
+#ls   /home/
+#cat   /home/emp.db
+----------------------------------------------------------------------------------
+11. Delete existing database
+#mysql   -u   root   -p
+> show   databases;
+> drop   database   employee;
+> show   databases;
+----------------------------------------------------------------------------------
+create database with same name for restore purpose
+> create   database   employee;
+> use   employee;
+> show  tables;
+> exit
+----------------------------------------------------------------------------------
+12. For restore database
+#mysql   -u   root    -p=india    employee   <   /home/emp.db
+----------------------------------------------------------------------------------
+13. For verify
+#mysql   -u   root   -p   
+> show  databases;
+> use   employee;
+> show  tables;
+> select  * from  info;
+> exit
+----------------------------------------------------------------------------------
+mysqldump   -u   root   -p=india   employee   >   /home/emp.db
+rync  -r  /home/emp.db  root@192.168.1.3:/backup/
+=============================================================================================================================
+
+NIC Teaming
+NIC teaming is the concept of combining  2 or more network interfaces into one logical interface to provide high throughput and redundancy. 
+This practice is popular especially with critical servers where high availability is expected at all times.
+
+----------------------------------------------------------------------------------------
+Team Running Mode
+
+broadcast	 – data is transmitted over all ports
+active-backup	 – one port or link is used while others are kept as a backup
+round-robin 	 – data is transmitted over all ports in turn
+loadbalancer	 – Traffic is distributed across all NIC’s.
+
+-----------------------------------------------------------------------------------------
+Steps for manage NIC Team:
+
+show nic info
+#nmcli   dev   status
+-----------------------------------------------------------------------------------------
+remove existing connection
+#nmcli   conn   show
+#nmcli   conn   delete   server     enp0s3
+-----------------------------------------------------------------------------------------
+create connection for team
+#nmcli   conn   add   con-name   Team1   ifname   Team1   type   team   config '{"runner":{"name":"activebackup"}}'
+-----------------------------------------------------------------------------------------
+modify team conn and add ip address
+#nmcli   conn   modify  Team1  ipv4.add  192.168.1.2/24   gw4   192.168.1.1   ipv4.dns   192.168.1.1   connection.autoconnect  yes  ipv4.method   manual
+-----------------------------------------------------------------------------------------
+add  slave into Team1
+#nmcli   dev   status
+
+#nmcli  conn  add  con-name  Team1-Slave1  ifname  enp0s3  type  team-slave  connection.autoconnect  yes  master   Team1
+#nmcli  conn  add  con-name  Team1-Slave2  ifname  enp0s8  type  team-slave  connection.autoconnect  yes  master   Team1
+#nmcli  conn  add  con-name  Team1-Slave3  ifname  enp0s9  type  team-slave  connection.autoconnect  yes  master   Team1
+-----------------------------------------------------------------------------------------
+down and up Team1 connection
+#nmcli   conn   down   Team1
+#nmcli   conn   up     Team1
+-----------------------------------------------------------------------------------------
+for verify
+#nmcli    dev   status
+#ifconfig
+-----------------------------------------------------------------------------------------
+show team statistic
+#teamdctl	Team1    stat
+==========================================================================================================================
+Ansible - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

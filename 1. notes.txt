@@ -1,0 +1,748 @@
+mkdir - create directory
+touch - create empty files
+rm    - remove file/dir
+cat   - create/write/append etc
+cp    - copy and paste
+mv    - cut/paste and rename
+--------------------------------------------------------------------------------------
+vim - (Visual IMprove)
+
+vim is improved version of vi editor which distributed in Unix OS.
+vim is very efficient and popular text editor program to work with text file.
+vim command is used for create, edit and append data in file.
+
+vim command work in 3 mode - 
+
+1. Command Mode
+2. Insert Mode
+3. Extended Mode
+
+eg.
+#vim     /note.txt
+
+
+
+Insert Mode- 
+Insert mode use for write information in file ( insert data in file )
+
+
+Extended Mode -
+
+Command Mode -
+
+yy		copy line
+yw		copy word
+nyy		copy number of lines
+
+dd		delete line
+dw		delete word
+ndd		delete number of lines
+
+p		paste
+u		undo 	 ( support 1000 times )
+ctr+r		redo	 ( support 1000 times )
+
+gg		to go top line of the file
+G		to go bottom line of the file
+ngg or nG       to go specific number of line
+===================================================================================================
+user account -
+
+what is user -
+user is name of computer account which is capable to login into computer.
+Every user can have different privilege ( permission) to use available hardware and software resources.
+
+Two types of user
+
+1. System User
+2. Normal User
+
+------------------------------------------------------------------------
+1. System User
+system user account create and delete automatically when we install operating system & application software.
+eg. root, apache
+-------------------------------------------------------------------------
+2. Normal User 
+normal user account create and delete by privilege users.
+eg.
+student, harry, ajay, sara
+-------------------------------------------------------------------------
+User Account Database 
+
+User Account Properties		-	/etc/passwd
+User Password Properties	- 	/etc/shadow
+--------------------------------------------------------------------------
+
+Every User always have Unique User ID -
+
+0 - 999 	user id use for system users (reserved)
+1000+  		user id use for normal users
+===============================================================================================
+Steps for manage user account
+----------------------------------------
+1. create user account
+#useradd	surya
+----------------------------------------
+2. set/change password
+#passswd	surya
+----------------------------------------
+3. check user account property
+#grep	surya	/etc/passwd
+----------------------------------------
+4. check user password property
+#grep	surya	/etc/shadow
+----------------------------------------
+5. switch to user account
+#su   surya
+----------------------------------------
+6. logout from user account
+#exit
+or
+press "ctrl+d"
+-----------------------------------------------------
+7. delete user account ( with directories )
+#userdel	-r	surya
+-----------------------------------------------------
+8. delete user account ( without directories )
+#userdel	surya 
+======================================================================
+Modify User Account Properties 
+-------------------------------------------------
+1. Modify user login name
+#usermod 	-l	suraj	Surya
+-------------------------------------------------
+2. Modify user id
+#usermod	-u	5050	Surya
+--------------------------------------------------
+3. Modify comment
+#usermod	-c	"sys admin"	Surya
+---------------------------------------------------
+4. Modify Directory
+#mkdir		/goa
+#usermod	-d	/goa	surya
+---------------------------------------------------
+5. Modify shell
+#usermod	-s	/sbin/nologin	Surya
+---------------------------------------------------
+6. Lock user password
+#usermod	-L	Surya
+---------------------------------------------------
+7. Unlock user password
+#usermod	-U	Surya
+---------------------------------------------------
+8. For password expiery
+#usermod	-e	"2024-06-30"	Surya
+=================================================================================================
+Group Account
+Group account is collection of user accounts.
+group account very useful for system admin to apply security on specific group of people.
+
+Type of groups:
+1. Primary Group
+2. Secondary Group
+------------------------------------------------------------------------------------
+1. Primary Group
+Primary group account create and delete automatically with user account operation.
+
+2. Secondary Group
+Secondary group account create and delete by privilege users.
+
+------------------------------------------------------------------------------------
+Group Account Database
+
+1. Group account properties		/etc/group
+2. Group admin properties		/etc/gshadow
+------------------------------------------------------------------------------------
+Steps For manage group account
+
+1. create group account
+#groupadd	devgrp
+------------------------------------------------------------
+2. check group property
+#grep	devgrp		/etc/group
+------------------------------------------------------------
+3. modify group id
+#groupmod	-g	5005	devgrp
+------------------------------------------------------------
+4. add single member into group
+#gpasswd	-a	ajay	devgrp
+------------------------------------------------------------
+5. remove single member from group
+#gpasswd 	-d	ajay	devgrp
+------------------------------------------------------------
+6. Add/remove multiple in group
+#gpasswd	-M	ajay,harry,sara,sachin		devgrp
+------------------------------------------------------------
+7. Make group admin
+#gpasswd	-A	ajay	devgrp
+-------------------------------------------------------------
+8. change owner
+mkdir	/tcs
+#chown		sachin		/tcs
+-------------------------------------------------------------
+9. change  groupowner
+#chgrp		devgrp		/tcs
+-------------------------------------------------------------
+10. show details of file/dir (owner/groupowner)
+#ls	-ld	/tcs
+==================================================================================================
+Permissions
+ 
+Permission divide into 3 types
+1. Basic Permission
+2. ACL Permission
+3. Special Permission
+
+---------------------------------------------------
+1. Basic Permission
+It  very flexible to manage.
+Every file/dir by default have basic  permission
+
+---------------------------------------------------
+#mkdir  /Mumbai
+#touch  /note.txt
+
+-------------------------------------------------------
+For check permission of file
+#ls	-l	/note.txt
+-------------------------------------------------------
+For check permission of directory
+#ls  	-ld	/mumbai
+--------------------------------------------------------
+
+add permission to other
+#chmod 	o+rwx	/Mumbai
+
+add permission to group
+#chmod 	g+rwx	/mumbai
+
+add permission to user
+#chmod  u+rwx	/mumbai
+
+remove permission for user,group and other
+#chmod	u-rwx	/mumbai
+#chmod  g-rwx	/mumbai
+#chmod	o-rwx	/mumbai
+
+or
+#chmod	ugo-rwx	/Mumbai
+
+add read,execute to other
+#chmod	o+rx	/Mumbai
+
+for overwrite permission
+#chmod	ugo=rx  /mumbai
+
+for manage user,group,other
+#chmod	u+rwx,g+rx,o-rx		/mumbai
+
+Set permission with numeric -
+
+
+4	r
+2	w	
+1	x
+0	-
+
+#chmod	750	/mumbai
+
+=========================================================================================
+2. ACL ( Access Control List )
+
+ACL permission use for to provide permission to specific user and group.
+
+--------------------------------------------------------
+for check ACL permission of file
+#getfacl	/mumbai
+--------------------------------------------------------
+for set ACL permission to nita user
+#setfacl	-m	u:nita:rwx 	/mumbai
+--------------------------------------------------------
+For set ACL permission to mukesh user
+#setfacl	-m	u:mukesh:r-x 	/mumbai
+--------------------------------------------------------
+For Modify ACL permission of user
+#setfacl	-m	u:mukesh:rwx	/mumbai
+--------------------------------------------------------
+For remove ACL permission of user
+#setfacl	-x	u:mukesh:    /mumbai
+--------------------------------------------------------
+For remove all ACL permission at a time ( basic remain only )
+#setfacl	-b	/mumbai 
+--------------------------------------------------------
+For set ACL permission to group
+#setfacl	-m	g:miowner:rwx	/mumbai
+----------------------------------------------------------
+For remove ACL permission of group
+#setfacl	-x	g:miowner:	/mumbai
+----------------------------------------------------------
+For set deny permission to group
+#setfacl	-m	g:kkrgrp:---    /mumbai
+----------------------------------------------------------
+For set deny permission to user
+#setfacl	-m	u:hardik:--- 	/mumbai
+============================================================================================
+3. Special Permission:
+
+Special permission design for executable file and directory.
+It divided into 3 types-
+
+1. Set User ID   (SUID)
+2. Set Group ID  (SGID)
+3. Sticky Bit
+----------------------------------------------------------------------------
+1. Set User ID   (SUID)
+When we set SUID permission to any executable file then any one can run/execute file as owner.
+
+Set SUID
+#chmod	u+s	/usr/bin/nmtui
+
+Remove SUID
+#chmod 	u-s	/usr/bin/nmtui
+--------------------------------------------------------------------------------------
+2. Set Group ID  (SGID)
+When we set SGID permission on any directory then that directory group ownership inherit on new created child.
+
+Set SGID
+#chmod	g+s	/tata
+
+Remove SGID	
+#chmod	g-s	/tata
+------------------------------------------------------------------------------------
+3. Sticky Bit
+When we Sticky Bit permission on any directory then only owner can delete contents inside that directory.
+
+Set Sticky Bit
+#chmod	o+t	/database
+
+Remove Sticky Bit
+#chmod	o-t	/database
+-------------------------------------------------------------------------------------------
+Numaric for special permission
+
+u+s=4	any one can run/execute file as a owner
+g+s=2   parent directory groupownerhip  inherited on new child
+o+t=1	only owner can delete contents
+-------------------------------------------------------------------------------------------
+For set suid with number
+#chmod	4755   	/usr/bin/nmtui
+
+For remove suid with number
+#chmod	-4000 	/usr/bin/nmtui
+
+For set sgid and sticky
+#chmod	3755 	/tata
+
+For remove sgid
+#chmod 	-2000	/tata
+
+For remove sticky bit
+#chmod	-1000 	/tata
+
+For remove sgid and sticky
+#chmod	-3000	/tata
+===================================================================================
+Regular Expression - 
+Regular expression is process of search file/directory is base on name, size, permission, owner, groupowner etc.
+In regular expression use following popularly
+
+1. grep
+2. find
+3. head
+4. tail
+5. wc
+------------------------------------------------------------------------------------
+1. grep ( Global Regular Expression Print )
+grep command use for search specific word or character in a file, if search pattern is matched then grep show whole line.
+
+create file for understand grep command
+
+#vim    /home/linux.txt
+Linux is fast os
+Linux is open source os
+windows very easy to use
+Windows and linux both are very popular
+windows popular at client side and Linux popular at server side
+:wq
+----------------------------------------------------------------------------------------------
+eg.
+
+1. search word
+#grep	linux	/home/linux.txt
+-----------------------------------------------------------------------------
+2. search in multiple files
+#grep	linux	/home/linux.txt		/etc/passwd	/etc/group
+-----------------------------------------------------------------------------
+3. search case-insensitive (in-case sensitive)
+#grep	-i	linux	/home/linux.txt
+-----------------------------------------------------------------------------
+4. show line number
+#grep	-n	linux	/home/linux.txt
+-----------------------------------------------------------------------------
+5. show counting
+#grep	-c	root 	/etc/passwd
+-----------------------------------------------------------------------------
+6. show matched file names
+#grep	-l	root	/etc/passwd 	/etc/group	/home/linux.txt
+-----------------------------------------------------------------------------
+7. show unmatched file names
+#grep	-L	root	/etc/passwd 	/etc/group	/home/linux.txt
+-----------------------------------------------------------------------------
+8. show unmatched result ( inverse search )
+#grep	-v	linux	/home/linux.txt
+-----------------------------------------------------------------------------
+9. search recursively in directory
+#grep	-r	linux	/home/
+-----------------------------------------------------------------------------
+10. search and redirect result into new file 
+#grep	Linux	/home/linux.txt		>	/result.txt
+-----------------------------------------------------------------------------
+11. search and append result into a file
+#grep	windows	/home/linux.txt		>> 	/result.txt
+-----------------------------------------------------------------------------
+12. search root word and show which line start with root word
+#grep	^root	/etc/passwd
+-----------------------------------------------------------------------------
+13.  seach bash word and show which line end with bash word
+#grep	bash$	/etc/passwd
+
+==========================================================================================
+2. Find
+find command use for search file base on name, size, permission, owner, groupowner etc.
+
+eg.
+
+1. find with name file/dir
+#find	/home	-name	linux.txt
+-----------------------------------------------------------------------------
+2. find more than 100MB size file 
+#find	/usr	-size	+100M
+-----------------------------------------------------------------------------
+3. find less than 10MB size file
+#find	/usr	-size	-10M
+-----------------------------------------------------------------------------
+4. find more than 50MB but less than 100MB size file
+#find	/usr	-size	+50M	-size	-100M
+-----------------------------------------------------------------------------
+5. find base on owner
+#find	/home	-user	harry
+-----------------------------------------------------------------------------
+6. find base on groupowner
+#find	/	-group	tatagrp
+-----------------------------------------------------------------------------
+7.find base on permission
+#find	/usr/bin	-perm	4755
+or
+#find	/	-perm	777
+============================================================================================
+3. head
+head command use for show top 10 line of the file
+
+eg.
+show top 10 line
+#head		/etc/passwd
+
+show top 4 line
+#head	-n	4	/etc/passwd
+============================================================================================
+4. tail
+tail command use for show bottom 10 line of the file
+
+eg.
+show bottom 10 line
+#tail		/etc/passwd
+
+show bottom 3 line
+#tail	-n	3	/etc/passwd
+============================================================================================
+5. wc (word count)
+wc command use for show counting of lines, words and characters.
+
+eg.
+#wc	/home/linux.txt
+
+show lines counting
+#wc	-l	/home/linux.txt
+
+show words counting
+#wc	-w	/home/linux.txt
+
+show characters	counting
+#wc	-c	/home/linux.txt
+
+========================================================================================
+Archive File
+Archiving is the process of combining multiple files and directories into one file.
+Archive process is very useful for backup and compression size of data in Linux.
+-----------------------------------------------------------------------------------
+What is tar?
+The Linux “tar” stands for tape archive, which is used by large number of Linux/Unix system administrators to compress size or drives backup.
+For create archive tar used some compression algorithms Such as gzip,bz2 and xz
+-----------------------------------------------------------------------
+
+For Create Archive ( without compression )
+#tar	-cvf	/mnt/backup.tar		/var
+-----------------------------------------------------------------------
+For Create Archive with gz compression
+#tar	-cvzf	/mnt/backup.tar.gz	/var
+-----------------------------------------------------------------------
+For Create Archive with bz2 compression
+#tar	-cvjf	/mnt/backup.tar.bz2	/var
+-----------------------------------------------------------------------
+For Create Archive with xz compression
+#tar	-cvJf	/mnt/backup.tar.xz	/var
+-----------------------------------------------------------------------
+For check/test Archive contents
+#tar	-tvf	/mnt/backup.tar
+-----------------------------------------------------------------------
+Extract/Decompression - 
+extract is process of extract contents of compress file back into real formate
+
+show size of archive file
+
+#cd   /mnt/
+#du	-sh	*
+---------------------------------------------------------------
+For extract Archive ( extract on default location )
+#tar	-xvf	backup.tar
+---------------------------------------------------------------
+create directory to extract other archive files
+#mkdir	/gzip	/bzip2	/xzip
+---------------------------------------------------------------
+For extract gz compress file on custom location
+#tar	-xvzf	backup.tar.gz	-C    /gzip/
+---------------------------------------------------------------
+For extract bz2 compress file on custom location
+#tar	-xvjf	backup.tar.bz2	-C 	/bzip2/
+---------------------------------------------------------------
+For extract xz compress file on custom location
+#tar	-xvJf	backup.tar.xz	-C	/xzip/
+---------------------------------------------------------------
+For verify size
+#du	-sh	/gzip	/bzip2	/xzip
+---------------------------------------------------------------
+
+Options -
+-c	create
+-v	verbose
+-f	forcefully
+-t	test
+-x	extract
+-C	customizable location
+-z	gzip compression
+-j	bz2 compression
+-J	xz compression
+
+===========================================================
+Job Automation -
+Job automation allow to run/execute job in operating system automatically when administrator not present.
+It is very helpful for us to perform daily basic work.
+For job automation we can use following commands
+
+1. at
+2. crontab
+
+-----------------------------------------------------------
+check time date
+#date
+
+To stop and disable automatic time synchronization
+#systemctl	stop	chronyd
+#systemctl	disable chronyd
+
+To set time & date
+#timedatectl	set-time	"2024-06-22 21:07:20"
+
+#date
+------------------------------------------------------------
+1. at
+at command use for run/execute job only one time.
+
+
+For set job with at
+#at	21.30
+>useradd    ajay
+>
+Press "ctrl+d" for save & quite
+------------------------------------------------------------
+2. show pending job 
+#atq
+------------------------------------------------------------
+3. show job in details
+#cd	/var/spool/at/
+#ls
+#tail	a0001a0fevd
+------------------------------------------------------------
+4. remove job 
+#atrm	1
+------------------------------------------------------------
+5. deny user to use at command
+#vim	/etc/at.deny
+sara
+:wq
+------------------------------------------------------------
+6. set job 3 days later
+#at	16.00	+	3	days
+------------------------------------------------------------
+7. set job 15 august
+#at	18.30	aug	15
+------------------------------------------------------------
+8. set job for tomorrow
+#at	10.10	tomorrow
+=========================================================================
+2. crontab
+crontab command use for run/execute multiple times.
+
+for set crontab
+#crontab	-e
+*	*	*	*	*	<set job here>
+
+------------------------------------------------------------
+set crontab to run every 2 min
+#crontab	-e
+*/2	*	*	*	*	date   >>   /time.txt
+:wq
+------------------------------------------------------------
+for show cronjob list
+#crontab	-l
+------------------------------------------------------------
+for remove crontab jobs	( remove all jobs )
+#crontab	-r
+------------------------------------------------------------
+for remove specific job
+#crontab 	-e
+remove job line (dd)
+:wq
+------------------------------------------------------------
+for deny sara user to use crontab command
+#vim	/etc/cron.deny
+sara
+:wq
+------------------------------------------------------------
+for show job of other  user
+#crontab	-u	sara	-l
+------------------------------------------------------------
+for set/edit job of other user
+#crontab	-u	sara	-e
+------------------------------------------------------------
+for remove job of other user
+#crontab	-u	sara	-r
+------------------------------------------------------------
+for show crontab logs
+#cat	/var/log/cron
+------------------------------------------------------------
+for set job in script file
+
+#vim   /script.sh
+#!/bin/bash
+rm	-rvf	/home/city*
+echo	hello  >>  /imp.txt
+:wq
+
+set execute permission to file
+#chmod 	755 	/script.sh
+
+set crontab job
+#crontab	-e
+*/2	*	*	*	*	/script.sh
+:wq
+
+for verify
+#crontab	-l
+#ls	/
+#cat	/imp.txt
+--------------------------------------------------------------
+
+010624/arch
+mkdir $(date +%d%m%y)
+==================================================================================================
+sudo ( super user do )
+
+sudo command allow normal user to run command as a super user. by using sudo command as a administrator we can allow other user to run commands a superuser.
+to provide sudo command privilege we need modify "/etc/sudoers" file.
+
+--------------------------------------------------------------------------------
+1. provide sudo command privilege to harry user
+#vim	/etc/sudoers
+harry	ALL=(ALL)	ALL			[ line number 101 ]
+:wq!
+
+To verify
+#su	harry
+$sudo	useradd		karan
+$sudo	passwd		karan
+--------------------------------------------------------------------------------
+2. provide sudo command privilege to amir user
+
+#gpasswd	-a	amir	wheel
+
+To verify
+#su	amir
+$sudo	useradd		karan1
+$sudo	passwd		karan1
+--------------------------------------------------------------------------------
+3. provide sudo command privilege to avenger group
+
+#vim	/etc/sudoers
+%avenger	ALL=(ALL)	ALL			[ line number 111 ]
+:wq!
+
+To Verify
+#useradd   kk
+#passwd	   kk
+#gpasswd	-a	kk	avenger
+#su	kk
+$sudo	useradd		karan2
+$sudo	passwd		karan2
+---------------------------------------------------------------------------------
+4. provide sudo command privilege to user & group without password or warning.
+
+#vim	/etc/sudoers
+harry		ALL=(ALL)	NOPASSWD:   ALL			[ line number 102 ]
+
+%avenger	ALL=(ALL)	NOPASSWD:   ALL			[ line number 111 ]
+
+
+===========================================================================================
+
+
+
+
+LS   22064
+  to  You (direct message)
+ls 2206 for seach
+
+Shreya Goyal  to  You (direct message) 12:01 AM
+u have shown us
+
+Akash Gupta  to  You (direct message) 12:02 AM
+hehe
+
+Shreya Goyal  to  You (direct message) 12:02 AM
+some arch result was coming
+
+Nitish Sharma 12:02 AM
+cat or tail that is for seach.
+
+=============================================================================================
+DISK MANAGEMENT -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
