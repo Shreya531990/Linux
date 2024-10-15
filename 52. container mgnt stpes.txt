@@ -1,0 +1,180 @@
+1. install package
+#yum install podman container-tools -y
+--------------------------------------------------------
+2. check podman version
+#podman  -v
+or
+#rpm  -q podman
+-------------------------------------------------------
+3. check container images
+#podman images
+-------------------------------------------------------
+4. show running container
+#podman ps
+-------------------------------------------------------
+5. show running & stopped container
+#podman  ps  -a
+-------------------------------------------------------
+6. for pull images of ubuntu
+#podman  pull  ubuntu
+-------------------------------------------------------
+7. run container with -dt mode
+#podman  run  -dt  ubuntu
+
+-d   detach
+-t   terminal
+-------------------------------------------------------
+8. run container with -it mode
+#podman run  -it  ubuntu  /bin/bash
+
+-i   interact
+-t   terminal
+
+Note:
+after exit command -it mode container will be stopped, -dt mode container still running
+-------------------------------------------------------
+9. to go inside -it mode container
+#podman   attach  <container name/ID>
+-------------------------------------------------------
+10. to go inside -dt mode container
+#podman   exec   -it   <container name/ID>  /bin/bash
+-------------------------------------------------------
+11. for stop running container
+#podman   stop   <container name/ID>
+-------------------------------------------------------
+12. for kill running container
+#podman   kill   <container name/ID>
+-------------------------------------------------------
+13. for start stopped container
+#podman   start   <container name/ID>
+-------------------------------------------------------
+14. for remove stopped container
+#podman  rm   <container name/ID>
+-------------------------------------------------------
+15. for stop all running container
+#podman  stop   -a
+-------------------------------------------------------
+16. for kill all container 
+#podman  kill   -a
+-------------------------------------------------------
+17. for remove all stop container
+#podman  rm   -a
+-------------------------------------------------------
+18. for provide name to container
+#podman  run  -dt  --name=c1  ubuntu
+-------------------------------------------------------
+19. run httpd into container and expose port 81
+#podman  run  -dt   --name=c2  -t  -p  81:80   httpd
+
+for verify default web page
+open web browser
+http://192.168.0.104:81
+-------------------------------------------------------
+20. run httpd and host custom web page
+#podman  run  -dt   --name=c3  -t  -p  82:80   httpd
+
+for verify default web page
+open web browser
+http://192.168.0.104:82
+
+to go inside container
+#podman exec  -it  c3   /bin/bash
+root@6a66794dfb10:/usr/local/apache2# ls
+root@6a66794dfb10:/usr/local/apache2# cd  htdocs
+root@6a66794dfb10:/usr/local/apache2# ls
+root@6a66794dfb10:/usr/local/apache2# cat  > index.html
+<htlm>
+root@6a66794dfb10:/usr/local/apache2/htdocs# cat > index.html
+<html>
+<head><title>Apache</title></head>
+<body bgcolor=skyblue>
+<h1>Welcome to my first container website</h1>
+</body>
+</html>
+
+press ctrl+d for save
+root@6a66794dfb10:/usr/local/apache2#exit
+
+for verify 
+open web browser
+http://192.168.0.104:82
+-----------------------------------------------------------------------------------------------
+21. run httpd and host free website template
+#podman  run  -dt   --name=c4  -t  -p  83:80   httpd
+
+to go inside container
+#podman exec  -it  c4   /bin/bash
+	# cat  /etc/os-release
+	# apt-get update  -y
+	# apt-get install  wget  unzip  -y
+	# wget https://www.free-css.com/assets/files/free-css-templates/download/page291/edu-meeting.zip
+	# unzip   edu-meeting.zip
+	# cp -rvf templatemo_569_edu_meeting/* htdocs/
+	# exit
+
+for verify 
+open web browser
+http://192.168.0.104:83
+-----------------------------------------------------------------------------------------------
+22. run nginx and host free website template
+#podman  run  -dt   --name=c6  -t  -p  85:80   nginx
+
+to go inside container
+#podman exec  -it  c6   /bin/bash
+	# cat  /etc/os-release
+	# apt-get update  -y
+	# apt-get install  wget  unzip  -y
+	#  wget https://www.free-css.com/assets/files/free-css-templates/download/page290/restoran.zip
+	# unzip   restoran.zip
+	# cp -rvf bootstrap-restaurant-template/* /usr/share/nginx/html/
+	# exit
+
+for verify 
+open web browser
+http://192.168.0.104:85
+-----------------------------------------------------------------------------------------------
+23. for create image of running container
+#podman   commit   c6  resto
+-----------------------------------------------------------------------------------------------
+24. for launch container from above created image
+#podman  run  -dt  --name=con1  -t  -p  8080:80  localhost/resto
+
+for verify 
+open web browser
+http://192.168.0.104:8080
+-----------------------------------------------------------------------------------------------
+25. share host os directory with container
+
+#mkdir   /india
+#chmod   777  /india
+#touch  /india/test.txt
+
+#podman  run  -dt  --name=c1   -v  /india/:/Mumbai/  --priviledged=true   ubuntu
+#podman  exec -it  c1  /bin/bash
+	#ls	
+	#cd /Mumbai
+	#ls
+	#touch  best.txt
+	#exit
+#ls	/india
+-------------------------------------------------------------------------------------------------
+26. create MySQL container
+#podman  run  -dt  --name=con1  -e "MYSQL_ROOT_PASSWORD=india" -t -p 3306:3306 MySQL
+#podman  exec  -it  con1  /bin/bash
+	#mysql  -u  root  -p
+	#show   databases;
+	#create  database  employee;
+	#show  databases;
+	#exit
+	#exit
+-------------------------------------------------------------------------------------------------
+27. remove container images
+
+#podman   rmi   localhost/education
+-------------------------------------------------------------------------------------------------
+
+
+
+
+
+

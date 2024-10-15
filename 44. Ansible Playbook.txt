@@ -1,0 +1,177 @@
+==========================================================================
+Ansible Playbook:
+
+Ansible Playbooks are the way of sending commands to remote systems through scripts.
+Ansible playbooks are used to configure complex system environments to increase flexibility by executing a script to one or more systems.
+Playbooks are run sequentially.
+All playbooks written in yaml format
+----------------------------------------------------------------------------------------------------------------------------------------
+What is YAML
+YAMLstands for Ain’t Markup Language(Yet Another Markup Language).
+It is a data serialization language designed to be directly writable and readable by humans.
+----------------------------------------------------------------------------------------------------------------------------------------
+Play book is very sensitive:
+We should be more cautious with the spaces while writing a ansibleplaybook. Tabs are not allowed here.
+Character should start exactly or after the previous parameter starts and it should looks like a statement.
+
+Basically Playbooks consists of three sections
+
+1. Host declaration
+2. Variable declaration (optional)
+3. Action / Tasks Declaration
+------------------------------------------------------------------------------------------------------
+1. Write a sample playbook for create user account
+
+$cd  /home/itadmin/punepro/
+$vim  user.yml
+---
+ - name: create user account
+   hosts: all
+   tasks:
+     - name: create user sandip
+       user:
+         name: sandip
+         state: present
+:wq
+
+check playbook syntax:
+$ansible-playbook    user.yml      --syntax-check
+
+run playbook
+$ansible-playbook    user.yml   
+--------------------------------------------------------------------------------------------
+2. Write a playbook for create group account
+
+$vim   group.yml
+---
+ - name: create group acocunt
+   hosts: all
+   tasks:
+     - name: create group ibmgrp
+       group:
+         name: ibmgrp
+         state: present
+:wq
+
+check playbook syntax:
+$ansible-playbook    group.yml      --syntax-check
+
+run playbook
+$ansible-playbook   group.yml   
+-------------------------------------------------------------------------------------
+3. write a playbook for manage file
+
+$vim   managefile.yml
+---
+ - name: manage file and directory
+   hosts: all
+   tasks:
+     - name: create directory /redhat
+       file:
+         path: /redhat
+         state: directory
+         owner: sandip
+         group: ibmgrp
+     - name: create file inside redhat directory
+       file:
+         path: /redhat/linux.txt
+         state: touch
+     - name: write line in file
+       lineinfile:
+         path: /redhat/linux.txt
+         line: 'Linux is Fastest OS'
+:wq
+
+$ansible-playbook  managefile.yml  --syntax-check
+$ansible-playbook managefile.yml
+------------------------------------------------------------------------------
+Write a playbook manage user group and file
+
+$vim   book1.yml
+---
+ - name: manage user group and files
+   hosts: all
+   tasks:
+     - name: create user virat
+       user:
+         name: virat
+         state: present
+     - name: create group rcbgrp
+       group:
+         name: rcbgrp
+         state: present
+     - name: create directory banglor
+       file:
+         path: /banglor
+         state: directory
+         owner: virat
+         group: rcbgrp
+     - name: create user max user and add into rcbgrp
+       user:
+         name: max
+         state: present
+         groups: rcbgrp
+         append: yes
+:wq
+
+$ansible-playbook   book1.yml
+-------------------------------------------------------------------------------------------------------------------
+5. Write playbook for configure apache web server
+
+$vim   apache.yml
+---
+ - name: configure apache web server
+   hosts: all
+   tasks:
+     - name: Transfer repo file
+       copy:
+         src: /etc/yum.repos.d/server.repo
+         dest: /etc/yum.repos.d/
+     - name: install httpd package
+       yum:
+         name: httpd
+         state: present
+     - name: start httpd service
+       service:
+         name: httpd
+         state: started
+     - name: enable httpd service
+       service:
+         name: httpd
+         enabled: yes
+     - name: create sample index.html page
+       file:
+         path: /var/www/html/index.html
+         state: touch
+     - name: write line in web page
+       lineinfile:
+         path: /var/www/html/index.html
+         line: 'Welcome to Apache Web Server hosted with ansible automation'
+     - name: add http into firewall
+       command: firewall-cmd --permanent --add-service=http
+     - name: restart firewall service
+       service:
+         name: firewalld
+         state: restarted
+     - name: restart httpd service
+       service:
+         name: httpd
+         state: restarted
+:wq
+$ansible-plabook  apache.yml
+----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

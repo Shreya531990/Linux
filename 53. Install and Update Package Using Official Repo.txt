@@ -1,0 +1,58 @@
+Step for register system redhat subscription manager:==========================================================================================================
+Step1: Create redhat login ( using web browser)
+
+https://www.redhat.com/wapps/ugc/register.html?_flowId=register-flow&_flowExecutionKey=e1s1
+
+Create personal account 
+-----------------------------------------------------------------------------------------------------
+Step2: Login in RHEL9
+
+Open terminal active internet using appropriate network settings
+(Set proper time date/timezone)
+
+------------------------------------------------------------------------------------------------------
+Step3: login redhat create account using subscription manager
+
+#subscription-manager register 
+
+username:
+password:
+
+-------------------------------------------------------------------------------------------------------
+Step4: Check available subscription list
+
+#subscription-manager list --avaialable
+
+check "Red Hat Developer Subscritpion For Indivisual" subscription pool ID and copy it.
+--------------------------------------------------------------------------------------------------------
+Step5: Attach Pool ID
+
+#subscription-manager attach --pool  <Past copied Pool_ID here>
+
+---------------------------------------------------------------------------------------------------------
+Step6: Check yum repolist
+
+#yum clean all
+#yum repolist
+
+We can update packagae now
+
+eg.
+
+#rpm -q firefox
+or
+#yum info firefox
+
+verify:
+#yum update firefox -y
+
+#rpm -q firefox
+---------------------------------------------------------------------------------------------------------
+Step7: To unsubscribe subscritpion manager
+
+#subscription-manager unregister
+==========================================================================================================
+
+
+
+

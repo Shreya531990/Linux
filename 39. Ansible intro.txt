@@ -1,0 +1,27 @@
+Ansible
+-----------------------------------------------------------------------
+Ansible is open source software configuration management tool.
+Ansible can control hundereads and more clients from central server without any agent.
+Ansible was develop by Michael Dehaan and his team in Feb 2012.
+Ansible tool develop in python programming language.
+Intialy Ansible Work Inc provide funding to ansible project but later 2015 Redhat acquired ansible project.
+Ansible is one of the most popular tool to manage software configuration management,infrastructure management of cloud,manage various routers,firewalls, and network devices.
+Ansible can work on cross platform.
+Ansible use ssh proctol to connect with client computers.
+Ansible is lightweight, easy to use, secure,agentless tool as compare with compatative tools ( puppet, chef, CF-Engine)
+----------------------------------------------------------------------
+Ansible Advantages:
+
+Ansibleis free to use everyone
+Ansibleis Simple
+Ansibleis Powerful
+Ansibleis Agentless
+Ansibleis work on Cross platform Support
+Ansibleis Human Readable Automation
+AnsibleThink Declaratively
+Ansibleis allow Break Complexity
+Ansibleis Very Secure
+Ansibleis consistent and lightweight
+================================================================
+Ansible Lab Setup:
+

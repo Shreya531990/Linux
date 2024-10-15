@@ -1,0 +1,69 @@
+1.	SELINUX : 
+Set your system to permissive mode permanently 
+
+2.	HOSTNAME : 
+Set the Hostname to your system
+System 1: station10.domain.example.com
+
+3.	USER OF SPECIFIC UID:
+Create a user jean .User id of this user should be 2556 .
+
+4.	USERMGMT: 
+Create a group sysmgrs .Create users susan ,natasha& harry . Users susan & harry should be a part of the sysmgrs group. natasha should not be a part of that group and she is given an non interactive shell. password of all users are "Asimov".
+
+5.	TAR:
+Create an archive file by using extension /backup.tar.bz2 of /usr/sbin
+
+
+6.	GREP:
+Search for the text 'strato' in the file /usr/share/dict/words & copy this to a file /root/lines.txt .The new file should not have any blank spaces or lines . The order of the names in the new file should be same as the order in which it appears in the original file
+
+7.	SWAP:
+Create a Swap partition of 725MB
+
+8.	ACL:
+Copy /etc/fstab to /var/tmp/fstab . The user & group owner of that file should be root . All users should be able to read the file . No one should be able to execute. susan should not be able to read nor write . natasha should be able to read & write.
+
+9.	DIRECT COLLABORATION:
+Secure /netdir such that only group sysmgrs can access it . Group owner should be sysmgrs& all child directories & files by default should have group sysmgrs.
+
+10.	CRON:
+Add a cron job for the user harry /bin/echo hiya . This job should run every day at 14:50
+Note:- create a user harry if not present 
+
+11. Assign the Sudo Privilege for Group "admin" and Group members can administrate without any password.
+
+12.	lVM:
+Create a logical volume {lv} name “mylv” from the volume group {vg}name “myvg” . The volume group {vg} should have extents of size 16MiB . The logical volume {lv} should have 28 extents . Mount this lvm as /mnt/mydata2. Make it as x file system .
+
+
+13.	IPCONFIG
+Configure Following IP addresses your system.
+
+System 1: 
+IP ADD:			172.25.0.10
+SUB MASK:		255.255.255.0
+Gateway:		172.25.0.1
+DNS Server:		172.25.0.1
+
+Hostname:
+server0.example.com
+
+14.	 Sudo  Privilege 
+Assign the Sudo Privilege for Group "admin" and Group members can administrate without any password.
+
+
+15.	LVM RESIZE: 
+Extend your LVM /root to 2 GB.
+
+16.	FIND:
+Locate all files owned by user susan & copy them to /home/susan data
+
+17.	YUM CREATE : 
+Create yum server configuration on Server0 for the 
+baseurl=
+http://172.25.0.10/AppStream 
+http://172.25.0.10/BaseOS
+
+18. 	RESET ROOT PASSWORD
+Assign root user password as northale.

@@ -1,0 +1,237 @@
+Practice Que
+==============================================================================
+1.  USERADD 
+Create user Angelina with 2332 UID.
+Ans:
+#useradd -u 2332 Angelina
+==============================================================================
+2.  USER MGNT 
+Create user Harrison, rakesh and frankenstein.  Harrison and frankenstein should be the part of Ibmgrp group. add rakesh into non-interactive shell. rakesh not a part of ibmgrp group. set "Br1@striv88" password for all users.
+Ans:
+#useradd Harrison
+#useradd rakesh
+#useradd frankenstein
+#usermod -s  /sbin/nologin  rakesh
+
+#groupadd Ibmgrp
+#gpasswd -M Harrison,frankenstein Ibmgrp
+
+#echo Br1@striv88 | passwd  --stdin Harrison
+#echo Br1@striv88 | passwd  --stdin rakesh
+#echo Br1@striv88 | passwd  --stdin frankenstein
+==============================================================================
+3. GREP 
+ Search string "ich" /usr/share/dict/words and store output into /root/sresult.txt
+Ans:
+#grep ich  /usr/share/dict/words  >  /root/sresult.txt
+==============================================================================
+4. SWAP 
+Extend your system swap memory with 820 MB.
+#free -m
+#lsblk
+#fdisk /dev/sdb
+create partition 820 MB with partition ID 82
+:w (write or save)
+
+#mkswap  /dev/sdb1
+#swapon  /dev/sdb1
+#vim /etc/fstab
+/dev/sdb1	swap	swap	defaults	0 0
+:wq
+#reboot
+#free -m
+==============================================================================
+5. SECURE DIECTORY
+Secure directory /datacenter in a such way only Ibmgrp group can fully access it. file and directory created inside /datacenter directory in future should have by default Ibmgrp group ownership.
+Ans:
+#mkdir /datacenter
+#ls -ld /datacenter
+
+#chgrp  Ibmgrp  /datacenter
+#chmod 2070 /datacenter
+
+#ls -ld /datacenter
+
+==============================================================================
+6. LVM 
+ Create logical volume nokialv and sonylv respectively 700MB and 30 LE size from volume group smartphone. Create file system xfs on both LV's and mount it permanently /nokia1 and /sony1.[PE Size = 8 MB]
+Ans:
+#lsblk
+#fdisk /dev/sdb
+create partition 956MB with partition ID=8e
+:w (write & quite)
+
+#pvcreate /dev/sdb2
+#vgcreate -s 8 smartphone /dev/sdb2
+
+#lvcreate  -L 700 -n /dev/smartphone/nokialv
+#lvcreate  -l 30 -n /dev/smartphone/sonylv
+
+#mkfs.xfs  /dev/smartphone/nokialv
+#mkfs.xfs  /dev/smartphone/sonylv
+
+#mkdir /nokia1 /sony1
+#vim /etc/fstab
+/dev/smartphone/nokialv		/nokia1	xfs	defaults	0 0
+/dev/smartphone/sonylv		/sony1	xfs	defaults	0 0
+
+==============================================================================
+7.  EXPIRY DAYS 
+Set by default for all new users’ password max days to be use 30 days (instead of 99999).
+
+Ans:
+#vim   /etc/login.defs
+PASS_MAX_DAYS  30   (Modify line 131 as per req)
+:wq
+==============================================================================
+8.  CRON:
+Add a cron job /script.sh  for the user sikandar. This job should run every 5 min.
+Note: - create a user sikandar if not present.
+Ans:
+#useradd sikandar
+#crontab -u sikandar -e
+*/5	*	*	*	*	/script.sh
+:wq
+#systemctl start crond
+#systemctl enable crond
+
+#crontab -u sikandar -l
+==============================================================================
+9. Assign Sudo Privilege 
+Assign the sudo Privilege for Group "punegrp" and Group members can run sudo command without any password.
+Ans:
+#groupadd punegrp
+#vim /etc/sudoers
+%punegrp	ALL=(ALL) 	NOPASSWD: ALL
+:wq
+==============================================================================
+10. Reset Root Password 
+Reset root password and set new password “Uv@pune321"
+
+Ans:
+#reboot ( alt+ctrl+del | crtl + del)
+press "Esc" select second line - press "e" to edit.
+go to end of the rescue line and type rd.break press "ctrl+x"
+
+press "enter"
+#mount -o remount,rw  /sysroot
+#chroot  /sysroot
+#passwd root
+Uv@pune321
+Uv@pune321
+
+#touch /.autorelabel
+#exit
+#exit
+==============================================================================
+11. TAR:
+Create an archive file by using extension /backup.tar.xz of /usr/sbin
+Ans:
+#tar  -cvJf  /backup.tar.xz /usr/sbin
+
+==============================================================================
+12. Configure the network. 
+Assign hostname and IP address for your virtual machine.
+Hostname :			 district7.state1.example.com
+IP Address:			10.0.0.2
+Subnet Mask:			255.0.0.0
+Gateway Address:		10.0.0.1
+Name Server Address:		10.0.0.254
+
+#nmcli con	show
+#nmcli con add	con-name district7  ifname enp0s3 type ethernet  ipv4.add 10.0.0.2/8 gw4	10.0.0.1 ipv4.dns 10.0.0.254  connection.autoconnect  yes ipv4.method manual
+#nmcli con  down  enp0s3
+#nmcli con  up  district7
+#ifconfig enp0s3
+
+#hostname
+#hostnamectl set-hostname district7.state1.example.com
+#hostname
+==============================================================================
+13. ACL: 
+Copy /etc/fstab to /var/tmp/fstab . The user & group owner of that file should be root. All users should be able to read the file. No one should be able to execute. frankenstein should not be able to read nor write. Harrison should be able to read & write.
+Ans:
+#cp  -rvf  /etc/fstab  /var/tmp/
+#getfacl  /var/tmp/fstab
+
+#setfacl -m  u:frankenstein:---  /var/tmp/fstab
+#setfacl -m  u:Harrison:rw-  /var/tmp/fstab
+
+#getfacl  /var/tmp/fstab
+
+============================================================================================
+14. Resize
+Extend the existing volume size / with 3 GB.
+Ans:
+create partition 3080 MB partition with LVM ID(8e)
+
+#pvcreate /dev/sdb3
+#vgextend rhel /dev/sdb3
+#lvextend -L +3G /dev/rhel/root
+#blkid /dev/rhel/root
+#xfs_growfs /
+#lsblk
+===============================================================================================
+15. Create a sample script file /script.sh when we run that script then all file of sikandar ownership contents should be copied inside /home/sikandar/data/.
+Ans:
+#vim  script.sh
+#!/bin/bash
+find / -user sikandar -exec cp -rvf {} /home/sikandar/data/ \;
+:wq
+#chmod  755 /script.sh
+
+==============================================================================
+16. Set a job, system should be shutdown daily at 6.20 PM
+Ans:
+#crontab -e 
+20	18	*	*	*	/usr/sbin/shutdown
+:wq
+
+==============================================================================
+17. create yum server by using following url:
+
+AppStream:
+baseurl=http://192.168.1.2/AppStream
+Base:
+baseurl=http://192.168.1.2/BaseOS
+
+Ans:
+#vim /etc/yum.repos.d/exam.repo
+[1]
+name=app
+baseurl=http://192.168.1.2/AppStream
+enabled=1
+gpgcheck=0
+[2]
+name=base
+baseurl=http://192.168.1.2/BaseOS
+enabled=1
+gpgcheck=0
+:wq
+
+#yum clean all
+#yum repolist
+==============================================================================
+18. 
+Set recommended tuned profile to your system.
+Ans:
+#yum install tuned
+#systemctl start tuned
+#systemctl enable tuned
+#tuned-adm recommend
+#tuned-adm profile virtual-guest
+
+#tuned-adm active
+==============================================================================
+19. SELinux:
+Set your system to permissive mode permanently.
+
+Ans:
+#vim /etc/selinux/config
+
+SELINUX=permissive
+:wq
+
+#reboot
+#getenforce
+==============================================================================
